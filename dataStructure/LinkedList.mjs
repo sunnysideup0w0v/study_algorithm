@@ -48,7 +48,7 @@ class LinkedList {
   }
 
   insertAt(index, data) {
-    if (index > this.count || index < 0) throw new Error('노드 할당 가능 범위를 벗어났습니다.')
+    if (index >= this.count || index < 0) throw new Error('노드 할당 가능 범위를 벗어났습니다.')
 
     const newNode = new Node(data);
 
@@ -74,7 +74,7 @@ class LinkedList {
   }
 
   deleteAt(index) {
-    if (index > this.count || index < 0) throw new Error('삭제 가능한 범위가 아닙니다.');
+    if (index >= this.count || index < 0) throw new Error('삭제 가능한 범위가 아닙니다.');
 
     let currentNode = this.head;
     let deletedNode = this.head;
@@ -98,6 +98,8 @@ class LinkedList {
   }
 
   getNodeAt(index) {
+    if (index >= this.count || index < 0) throw new Error('출력 가능한 범위를 넘어갔습니다')
+
     let targetNode = this.head;
 
     for (let i = 0; i < index - 1; i++) {
