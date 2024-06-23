@@ -23,7 +23,7 @@ list.deleteLast();
 list.printAll();
 
 console.log('>>> getNode() 실행')
-list.getNodeAt(3)
+console.log(list.getNodeAt(3).data)
 
 console.log('>>> clear() 실행')
 list.clear();

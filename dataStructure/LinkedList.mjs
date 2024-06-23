@@ -48,7 +48,7 @@ class LinkedList {
   }
 
   insertAt(index, data) {
-    if (index >= this.count || index < 0) throw new Error('노드 할당 가능 범위를 벗어났습니다.')
+    if (index > this.count || index < 0) throw new Error('노드 할당 가능 범위를 벗어났습니다.')
 
     const newNode = new Node(data);
 
@@ -102,11 +102,12 @@ class LinkedList {
 
     let targetNode = this.head;
 
+
     for (let i = 0; i < index - 1; i++) {
       targetNode = targetNode.next;
     }
 
-    console.log(targetNode.data)
+    return targetNode;
   }
 }
 
