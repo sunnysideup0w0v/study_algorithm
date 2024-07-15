@@ -1,0 +1,6 @@
+# node_modules 제외
+node_modules/
+
+# quiz 하위에 있는 js 파일, js.map 파일 제외
+quiz/**/*.js
+quiz/**/*.js.map
