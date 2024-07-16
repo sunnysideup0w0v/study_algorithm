@@ -34,7 +34,7 @@ class BinarySearchTree {
     // 새로운 노드 생성
     const newNode = new BinaryTree(data);
 
-    // 새로운 노드 삽입
+    // 새롭게 생성된 노드 삽입
     if (parentNode.getData() > data) {
       parentNode.setLeftSubTree(newNode);
     } else {
@@ -59,8 +59,6 @@ class BinarySearchTree {
 
     return currentNode;
   }
-
-  // 제거
 }
 
 let binarySearchTree = new BinarySearchTree();
