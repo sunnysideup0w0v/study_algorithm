@@ -1,4 +1,4 @@
-import { BinaryTree } from '../BinaryTree.mjs';
+import { BinaryTree } from '../BinaryTree/BinaryTree.mjs';
 
 // 이진탐색트리는 이미 작성한 이진트리 구조를 기반으로 확장
 class BinarySearchTree {
