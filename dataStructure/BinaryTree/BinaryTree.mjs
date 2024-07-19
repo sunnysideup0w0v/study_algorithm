@@ -31,12 +31,18 @@ class BinaryTree {
     this.rightSubTree = tree;
   }
 
-  deleteLeftTree() {
-    this.leftSubTree = null;
+  removeLeftSubTree() {
+    let deletingNode = this.leftSubTree;
+    this.setLeftSubTree(null);
+
+    return deletingNode
   }
 
-  deleteRightTree() {
-    this.rightSubTree = null;
+  removeRightSubTree() {
+    let deletingNode = this.rightSubTree;
+    this.setRightSubTree(null);
+
+    return deletingNode;
   }
 
   // 전위순회
