@@ -1,4 +1,6 @@
 // 이진탐색트리는 이미 작성한 이진트리 구조를 기반으로 확장
+import { BinaryTree } from './BinaryTree.mjs';
+
 class AVLTree {
   constructor(rootNode = null) {
     this.root = rootNode;
@@ -31,7 +33,11 @@ class AVLTree {
     const leftSubTreeHeight = this.getHeight(node.getLeftSubTree());
     const rightSubTreeHeight = this.getHeight(node.getRightSubTree());
 
-    node.height = Math.max(leftSubTreeHeight, rightSubTreeHeight) + 1;
+    const nodeHeight = Math.max(leftSubTreeHeight, rightSubTreeHeight) + 1;
+    console.log('updateHeightNode >>> ', node, "\nnodeHeight >>> ", nodeHeight, "\n\n\n");
+
+    node.height = nodeHeight;
+
   }
 
   getBalanceFactor(node) {
@@ -124,8 +130,36 @@ class AVLTree {
   removeHelper(deletingNode, data, parentNode) { }
 
   insert(targetRootNode, data) {
-    // 재귀??
+    // AVL 트리의 삽입은 재귀함수를 통해 진행됨 -> 재귀를 통해 데이터를 삽입하고, 각 노드의 높이를 업데이트하며, 균형을 맞추기 위한 회전을 수행합니다.
+    if (targetRootNode === null) {
+      targetRootNode = new BinaryTree(data);
+    }
+
+    if (this.root === null) {
+      this.root = targetRootNode;
+    } else if (targetRootNode.getData() === data) {
+      return targetRootNode;
+    } else if (data < targetRootNode.getData()) {
+      targetRootNode.setLeftSubTree(this.insert(targetRootNode.getLeftSubTree(), data));
+    } else if (data > targetRootNode.getData()) {
+      targetRootNode.setRightSubTree(this.insert(targetRootNode.getRightSubTree(), data));
+    }
+
+    this.updateHeight(targetRootNode);
+    targetRootNode = this.rotation(targetRootNode, data);
+
+    return targetRootNode;
   }
 
   remove(targetRootNode, data, parentNode = null) { }
 }
+
+const avlTree = new AVLTree();
+
+avlTree.insert(null, 5);
+avlTree.insert(avlTree.root, 7);
+avlTree.insert(avlTree.root, 3);
+avlTree.insert(avlTree.root, 10)
+
+console.log('avlTree.search >>> ', avlTree.search(5))
+console.log('avlTree.height >> ', avlTree.getHeight(avlTree.search(5)))
