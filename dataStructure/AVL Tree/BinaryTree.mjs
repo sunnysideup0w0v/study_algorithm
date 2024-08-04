@@ -5,7 +5,7 @@ class BinaryTree {
     this.data = data;
     this.leftSubTree = leftSubTree;
     this.rightSubTree = rightSubTree;
-    this.height = 0;
+    this.height = 1;
   }
 
   getData() {
