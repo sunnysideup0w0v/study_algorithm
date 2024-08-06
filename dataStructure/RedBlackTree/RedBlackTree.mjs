@@ -23,6 +23,20 @@ class BinarySearchTree {
 
     return currentNode;
   }
+
+  // 자식 노드 교체
+  replaceParentsChild(parent, oldChlid, newChild) {
+  }
+
+  // 부모, 자식노드가 오른쪽으로 쭉 뻗어져있는 경우 사용
+  rotateLeft(node) {
+
+  }
+
+  // 부모, 자식노드가 왼쪽으로 쭉 뻗어져있는 경우 사용
+  rotateRight(node) {
+
+  }
 }
 
 
