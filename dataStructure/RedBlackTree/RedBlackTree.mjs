@@ -81,6 +81,10 @@ class RedBlackTree {
     return null;
   }
 
+  isBlack(node) {
+    return node === null || node.color === BLACK;
+  }
+
   /**
    * 
    * @param {BinaryTree} node 
@@ -108,7 +112,24 @@ class RedBlackTree {
     let uncle = this.getUncle(parent);
 
     // #2 부모 노드와 삼촌 노드가 빨간색인 경우
-    if (uncle.color === RED) { }
+    if (uncle !== null && uncle.color === RED) {
+      parent.color = BLACK;
+      uncle.color = BLACK;
+      grandParent.color = RED;
+
+      this.rebalanceAfterInsert(grandParent);
+    } else if (this.isBlack(uncle)) {
+      // #3. 부모 노드는 빨간색이고 삼촌 노드는 검은색, 새로운 노드는 안쪽 손자인 경우
+      if (grandParent.getRightSubTree() == parent && parent.getLeftSubTree() == node) {
+        this.rotateRight(parent);
+        this.rotateLeft(grandParent);
+        node.color = BLACK;
+      } else if (grandParent.getLeftSubTree() == parent && parent.getRightSubTree() == node) {
+        this.rotateLeft(parent);
+        this.rotateRight(grandParent);
+        node.color = BLACK;
+      }
+    }
   }
 
   // 삽입
