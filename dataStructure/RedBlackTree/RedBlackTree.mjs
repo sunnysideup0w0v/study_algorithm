@@ -8,39 +8,41 @@ class RedBlackTree {
 
 
   // 탐색
-  search(data) {
+  search(targetData) {
     let currentNode = this.root;
 
-    while (currentNode !== null) {
-      if (data < currentNode.getData()) {
+    while (currentNode != null) {
+      if (currentNode.getData() == targetData) {
+        return currentNode;
+      } else if (currentNode.getData() > targetData) {
         currentNode = currentNode.getLeftSubTree();
-      } else if (data > currentNode.getData()) {
-        currentNode = currentNode.getRightSubTree();
       } else {
-        break;
+        currentNode = currentNode.getRightSubTree();
       }
     }
 
-    return currentNode;
+    return null;
   }
 
   // 자식 노드 교체
   replaceParentsChild(parent, oldChild, newChild) {
-    if (parent === null) {
-      // node가 rootNode일 경우
+    if (parent == null) {
       this.root = newChild;
-    } else if (parent.getLeftSubTree() === oldChild) {
+    } else if (parent.getLeftSubTree() == oldChild) {
       parent.setLeftSubTree(newChild);
-    } else if (parent.getRightSubTree() === oldChild) {
+    } else if (parent.getRightSubTree() == oldChild) {
       parent.setRightSubTree(newChild);
     }
 
-    if (newChild !== null) newChild.setParent(parent)
+    if (newChild != null) {
+      newChild.setParent(parent);
+    }
   }
+
 
   // 부모, 자식노드가 오른쪽으로 쭉 뻗어져있는 경우 사용
   rotateLeft(node) {
-    let parent = node.getParentTree();
+    let parent = node.getParent();
     let rightChild = node.getRightSubTree();
 
     node.setRightSubTree(rightChild.getLeftSubTree());
@@ -55,12 +57,13 @@ class RedBlackTree {
     this.replaceParentsChild(parent, node, rightChild);
   }
 
+
   // 부모, 자식노드가 왼쪽으로 쭉 뻗어져있는 경우 사용
   rotateRight(node) {
-    let parent = node.getParentTree();
+    let parent = node.getParent();
     let leftChild = node.getLeftSubTree();
 
-    node.setRightSubTree(leftChild.getRightSubTree());
+    node.setLeftSubTree(leftChild.getRightSubTree());
 
     if (leftChild.getRightSubTree() != null) {
       leftChild.getRightSubTree().setParent(node);
@@ -72,8 +75,9 @@ class RedBlackTree {
     this.replaceParentsChild(parent, node, leftChild);
   }
 
+
   getUncle(parent) {
-    let grandParent = parent.getParentTree();
+    let grandParent = parent.getParent();
 
     if (grandParent.getLeftSubTree() == parent) return grandParent.getRightSubTree();
     else if (grandParent.getRightSubTree() == parent) return grandParent.getLeftSubTree();
@@ -97,7 +101,7 @@ class RedBlackTree {
    * #3. 부모 노드는 빨간색이고 삼촌 노드는 검은색, 새로운 노드는 안쪽 손자인 경우
    * #4. 부모 노드는 빨간색이고 삼촌 노드는 검은색, 새로운 노드는 바깥쪽 손자인 경우
    */
-  rebalanceAfterInsert(node) {
+  rebalanceAfterInsertion(node) {
     // #1 새로 삽입된 노드가 루트 노드인 경우    
     if (node == this.root) {
       node.color = BLACK;
@@ -105,10 +109,10 @@ class RedBlackTree {
     }
 
     // #2~#4 조건 모두 부모 노드가 붉은색인 경우이므로 부모 노드가 검은색인 경우는 함수를 종료한다.
-    if (node.getParentTree().color === BLACK) return;
+    if (node.getParent().color === BLACK) return;
 
-    let parent = node.getParentTree();
-    let grandParent = parent.getParentTree();
+    let parent = node.getParent();
+    let grandParent = parent.getParent();
     let uncle = this.getUncle(parent);
 
     // #2 부모 노드와 삼촌 노드가 빨간색인 경우
@@ -117,17 +121,27 @@ class RedBlackTree {
       uncle.color = BLACK;
       grandParent.color = RED;
 
-      this.rebalanceAfterInsert(grandParent);
+      this.rebalanceAfterInsertion(grandParent);
     } else if (this.isBlack(uncle)) {
-      // #3. 부모 노드는 빨간색이고 삼촌 노드는 검은색, 새로운 노드는 안쪽 손자인 경우
       if (grandParent.getRightSubTree() == parent && parent.getLeftSubTree() == node) {
+        // #3. 부모 노드는 빨간색이고 삼촌 노드는 검은색, 새로운 노드는 안쪽 손자인 경우 1
         this.rotateRight(parent);
         this.rotateLeft(grandParent);
         node.color = BLACK;
       } else if (grandParent.getLeftSubTree() == parent && parent.getRightSubTree() == node) {
+        // #3. 부모 노드는 빨간색이고 삼촌 노드는 검은색, 새로운 노드는 안쪽 손자인 경우 2
         this.rotateLeft(parent);
         this.rotateRight(grandParent);
         node.color = BLACK;
+      } else if (grandParent.getRightSubTree() == parent && parent.getRightSubTree() == node) {
+        // #4. 부모 노드는 빨간색이고 삼촌 노드는 검은색, 새로운 노드는 바깥쪽 손자인 경우 1
+        this.rotateLeft(grandParent);
+        parent.color = BLACK;
+        grandParent.color = RED;
+      } else if (grandParent.getLeftSubTree() == parent && parent.getLeftSubTree() == node) {
+        this.rotateRight(grandParent);
+        parent.color = BLACK;
+        grandParent.color = RED;
       }
     }
   }
@@ -137,31 +151,30 @@ class RedBlackTree {
     let current = this.root;
     let parent = null;
 
-    while (current !== null) {
+    while (current != null) {
       parent = current;
-
       if (data < current.getData()) {
         current = current.getLeftSubTree();
-      }
-      else if (data > current.getData()) {
+      } else if (data > current.getData()) {
         current = current.getRightSubTree();
-      }
-      else {
-        // 동일한 값이 있을 경우 데이터를 삽입하지 않는다.
+      } else {
         return;
       }
     }
 
-    const newNode = new BinaryTree(data);
-
-    if (parent == null) this.root = newNode;
-    else if (parent < data) parent.setRightSubTree(newNode);
-    else parent.setLeftSubTree(newNode);
+    let newNode = new BinaryTree(data);
+    if (parent == null) {
+      this.root = newNode;
+    } else if (data < parent.getData()) {
+      parent.setLeftSubTree(newNode);
+    } else {
+      parent.setRightSubTree(newNode);
+    }
 
     newNode.setParent(parent);
-
-    this.rebalanceAfterInsert(newNode);
+    this.rebalanceAfterInsertion(newNode);
   }
+
 }
 
 
@@ -172,3 +185,15 @@ class NILNode extends BinaryTree {
     this.color = BLACK;
   }
 }
+
+let rbTree = new RedBlackTree();
+
+rbTree.insert(17);
+rbTree.insert(9);
+rbTree.insert(19);
+rbTree.insert(75);
+rbTree.insert(85);
+
+console.log('root >>> ', rbTree.root);
+
+if (rbTree.root) rbTree.root.inOrderTraversal(rbTree.root)

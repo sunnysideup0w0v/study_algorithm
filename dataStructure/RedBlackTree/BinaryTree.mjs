@@ -5,7 +5,7 @@ const RED = false;
 const BLACK = true;
 
 class BinaryTree {
-  constructor(data,) {
+  constructor(data) {
     this.data = data;
     this.leftSubTree = null;
     this.rightSubTree = null;
@@ -34,7 +34,7 @@ class BinaryTree {
   }
 
   getRightSubTree() {
-    return this.rightSubTree
+    return this.rightSubTree;
   }
 
   setRightSubTree(tree) {
@@ -42,16 +42,14 @@ class BinaryTree {
   }
 
   removeLeftSubTree() {
-    let deletingNode = this.leftSubTree;
+    let deletingNode = this.getLeftSubTree();
     this.setLeftSubTree(null);
-
-    return deletingNode
+    return deletingNode;
   }
 
   removeRightSubTree() {
-    let deletingNode = this.rightSubTree;
+    let deletingNode = this.getRightSubTree();
     this.setRightSubTree(null);
-
     return deletingNode;
   }
 
@@ -83,11 +81,11 @@ class BinaryTree {
   }
 
   // 부모 getter/setter
-  getParentTree() {
+  getParent() {
     return this.parentTree;
   }
 
-  setParentTree(tree) {
+  setParent(tree) {
     this.parentTree = tree;
   }
 }
