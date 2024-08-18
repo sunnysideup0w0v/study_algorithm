@@ -175,6 +175,142 @@ class RedBlackTree {
     this.rebalanceAfterInsertion(newNode);
   }
 
+  remove(data) {
+    let currentNode = this.root;
+
+    while (currentNode !== null && data !== currentNode.getData()) {
+      if (data > currentNode.getData()) currentNode = currentNode.getRightSubTree();
+      else if (data < currentNode.getData()) currentNode = currentNode.getLeftSubTree();
+    }
+
+    if (currentNode === null) return null;
+
+    let replaceNode = null;
+    let deletedNodeColor = currentNode.color;
+
+    if (currentNode.getLeftSubTree() == null || currentNode.getRightSubTree() == null) {
+      // #1. 제거할 노드의 자식 노드가 없거나 한 개인 경우
+      replaceNode = this.removeWithZeroOrOneChild(currentNode);
+    } else {
+      // #2. 제거할 노드의 자식 노드가 두 개인 경우
+      let successor = this.getBiggestNode(currentNode.getLeftSubTree());
+      currentNode.setData(successor.getData());
+      replaceNode = this.removeWithZeroOrOneChild(successor);
+    }
+
+    // 제거한 노드의 색상이 RED라면 균형에 문제를 일으키지 않지만, BLACK이라면 문제를 일으킬 수 있기 때문에 rebalance 진행
+    if (deletedNodeColor === BLACK) {
+      this.rebalanceAfterDeletion(replaceNode);
+
+      // 대체한 노드를 처리할 때, null 대신 NilNode를 만들어 임시로 연결해준 경우에 대해 다시 null로 바꾸어 처리
+      if (replaceNode instanceof NILNode) {
+        this.replaceParentsChild(replaceNode.getParent(), replaceNode, null)
+      }
+    }
+  }
+
+  removeWithZeroOrOneChild(node) {
+    if (node.getLeftSubTree()) {
+      this.replaceParentsChild(node.getParent(), node, node.getLeftSubTree());
+      return node.getLeftSubTree();
+
+    } else if (node.getRightSubTree()) {
+      this.replaceParentsChild(node.getParent(), node, node.getRightSubTree());
+      return node.getRightSubTree();
+
+    } else {
+      const newChild = node.color === BLACK ? new NILNode() : null;
+      this.replaceParentsChild(node.getParent(), node, newChild);
+      return newChild;
+    }
+  }
+
+  getBiggestNode(node) {
+    while (node.getRightSubTree() !== null) node = node.getRightSubTree();
+
+    return node;
+  }
+
+  // 대체된 node를 params로 받음
+  rebalanceAfterDeletion(node) {
+    if (node == this.root) {
+      node.color = BLACK;
+      return;
+    }
+
+    // 형제노드 색상에 따라 5가지 상황으로 나눠 정리
+    let sibling = this.getSibling(node);
+
+    // #1. 형제 노드의 색상이 RED인 경우
+    if (sibling.color === RED) {
+      this.handleRedSibling(node, sibling);
+      sibling = this.getSibling(node);
+    }
+
+    // #1 에서 handleRedSibling을 통해 처리를 해도, #2~#5까지의 규칙을 위반할 수 있으므로, 외부에 if문을 재선언 하여 #2~#5의 경우에도 rebalance를 진행할 수 있도록 해야함
+    if (this.isBlack(sibling)) {
+      if (this.isBlack(sibling.getLeftSubTree()) && this.isBlack(sibling.getRightSubTree())) {
+        if (node.getParent().color === RED) {
+          // #2. 형제 노드와 형제 노드의 두 자식 노드가 모두 검은색이고, 부모 노드가 붉은색인 경우
+          sibling.color = RED;
+          node.getParent().color = BLACK;
+        } else {
+          // #3. 형제 노드와 형제 노드의 두 자식 노드가 모두 검은색이고, 부모 노드가 검은색인 경우
+          sibling.color = RED;
+          // 5번 규칙 위반으로 부모 노드를 대상으로 재귀호출 진행
+          this.rebalanceAfterDeletion(node.getParent());
+        }
+      } else {
+        // #4, #5
+        this.handleBlackSiblingWithAtLeastOneRedChild(node, sibling);
+      }
+    }
+  }
+
+  getSibling(node) {
+    let parent = node.getParent();
+
+    if (parent.getLeftSubTree() == node) return parent.getRightSubTree();
+    else if (parent.getRightSubTree() == node) return parent.getLeftSubTree();
+  }
+
+  handleRedSibling(node, sibling) {
+    sibling.color = BLACK;
+    let parent = node.getParent();
+    parent.color = RED;
+
+    if (parent.getLeftSubTree() == node) this.rotateLeft(parent);
+    else if (parent.getRightSubTree() == node) this.rotateRight(parent)
+  }
+
+  handleBlackSiblingWithAtLeastOneRedChild(node, sibling) {
+    let nodeIsLeftChild = node.getParent().getLeftSubTree() == node;
+
+    // #4. 형제 노드가 검은색이고 형제의 두 자식노드 중 하나라도 빨간색 노드가 있고 "바깥쪽 조카 노드"가 검은색인 경우
+    if (nodeIsLeftChild && this.isBlack(sibling.getRightSubTree())) {
+      sibling.getLeftSubTree().color = BLACK;
+      sibling.color = RED;
+      this.rotateRight(sibling);
+      sibling = node.getParent().getRightSubTree();
+    } else if (!nodeIsLeftChild && this.isBlack(sibling.getLeftSubTree())) {
+      sibling.getRightSubTree().color = BLACK;
+      sibling.color = RED;
+      this.rotateLeft(sibling);
+      sibling = node.getParent().getRightSubTree();
+    }
+
+    // #5. 형제 노드가 검은색이고 형제의 두 자식 노드 중 하나라도 빨간색 노드가 있고 "바깥쪽 조카 노드"가 빨간색인 경우
+    sibling.color = node.getParent().color;
+    node.getParent().color = BLACK;
+
+    if (nodeIsLeftChild) {
+      sibling.getRightSubTree().color = BLACK;
+      this.rotateLeft(node.getParent());
+    } else {
+      sibling.getLeftSubTree().color = BLACK;
+      this.rotateRight(node.getParent());
+    }
+  }
 }
 
 
@@ -193,6 +329,10 @@ rbTree.insert(9);
 rbTree.insert(19);
 rbTree.insert(75);
 rbTree.insert(85);
+
+rbTree.remove(19);
+rbTree.remove(75);
+rbTree.remove(85);
 
 console.log('root >>> ', rbTree.root);
 
