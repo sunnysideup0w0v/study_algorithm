@@ -33,14 +33,14 @@ class BinaryTree {
   }
 
   removeLeftSubTree() {
-    let deletingNode = this.leftSubTree;
+    let deletingNode = this.getLeftSubTree();
     this.setLeftSubTree(null);
 
     return deletingNode
   }
 
   removeRightSubTree() {
-    let deletingNode = this.rightSubTree;
+    let deletingNode = this.getRightSubTree();
     this.setRightSubTree(null);
 
     return deletingNode;

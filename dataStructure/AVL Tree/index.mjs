@@ -7,20 +7,20 @@ class AVLTree {
   }
 
   // 탐색
-  search(data) {
+  search(targetData) {
     let currentNode = this.root;
 
     while (currentNode !== null) {
-      if (data < currentNode.getData()) {
+      if (currentNode.getData() == targetData) {
+        return currentNode;
+      } else if (currentNode.getData() > targetData) {
         currentNode = currentNode.getLeftSubTree();
-      } else if (data > currentNode.getData()) {
-        currentNode = currentNode.getRightSubTree();
       } else {
-        break;
+        currentNode = currentNode.getRightSubTree();
       }
     }
 
-    return currentNode;
+    return null;
   }
 
   getHeight(node) {
@@ -78,7 +78,7 @@ class AVLTree {
     const balanceFactor = this.getBalanceFactor(targetNode);
     let isRootNode = false;
 
-    if (this.root === targetNode) {
+    if (this.root == targetNode) {
       isRootNode = true;
     }
 
@@ -106,7 +106,6 @@ class AVLTree {
     return targetNode;
   }
 
-  // 이거 이해가 잘 안됨
   getUnBalanceNode(targetRootNode, unBalanceNode = null) {
     if (targetRootNode.getLeftSubTree() === null && targetRootNode.getRightSubTree() === null) {
       unBalanceNode = targetRootNode;
@@ -125,6 +124,8 @@ class AVLTree {
 
     return unBalanceNode
   }
+
+
 
   insert(targetRootNode, data) {
     // AVL 트리의 삽입은 재귀함수를 통해 진행됨 -> 재귀를 통해 데이터를 삽입하고, 각 노드의 높이를 업데이트하며, 균형을 맞추기 위한 회전을 수행합니다.
@@ -151,12 +152,9 @@ class AVLTree {
   remove(targetRootNode, data, parentNode = null) {
     // 재귀함수를 이용해 하향식 접근 
     if (targetRootNode.getData() > data && targetRootNode.getLeftSubTree() !== null) {
-      console.log(targetRootNode, data, parentNode)
-
       targetRootNode.setLeftSubTree(this.remove(targetRootNode.getLeftSubTree(), data, targetRootNode));
-    } else if (targetRootNode.getData() < data && targetRootNode.getRightSubTree() !== null) {
-      console.log('data >>> ', data)
 
+    } else if (targetRootNode.getData() < data && targetRootNode.getRightSubTree() !== null) {
       targetRootNode.setRightSubTree(this.remove(targetRootNode.getRightSubTree(), data, targetRootNode));
     } else if (targetRootNode.getData() === data) {
       targetRootNode = this.removeHelper(targetRootNode, data, parentNode);
@@ -180,7 +178,6 @@ class AVLTree {
 
   removeHelper(deletingNode, data, parentNode) {
     let fakeParentRootNode = new BinaryTree(0);
-
     fakeParentRootNode.setRightSubTree(this.root);
 
     if (parentNode == null) {
@@ -188,52 +185,52 @@ class AVLTree {
     }
 
     let deletingNodeChild = null;
-
-    if (deletingNode.getLeftSubTree() === null && deletingNode.getRightSubTree() === null) {
+    if (deletingNode.getLeftSubTree() == null && deletingNode.getRightSubTree() == null) {
       // 삭제할 노드가 터미널 노드인 경우
-      if (parentNode.getLeftSubTree() === deletingNode) {
+      if (parentNode.getLeftSubTree() == deletingNode) {
         parentNode.removeLeftSubTree();
       } else {
         parentNode.removeRightSubTree();
       }
-    } else if (deletingNode.getLeftSubTree() === null || deletingNode.getRightSubTree() === null) {
+    } else if (deletingNode.getLeftSubTree() == null || deletingNode.getRightSubTree() == null) {
       // 삭제할 노드가 하나의 서브트리(혹은 자식 노드)를 가지고 있는 경우
-      if (deletingNode.getLeftSubTree() !== null) {
+      if (deletingNode.getLeftSubTree() != null) {
         deletingNodeChild = deletingNode.getLeftSubTree();
       } else {
         deletingNodeChild = deletingNode.getRightSubTree();
       }
 
-      if (parentNode.getLeftSubTree() === deletingNode) {
+      if (parentNode.getLeftSubTree() == deletingNode) {
         parentNode.setLeftSubTree(deletingNodeChild);
       } else {
         parentNode.setRightSubTree(deletingNodeChild);
       }
     } else {
-      // 삭제할 노드가 두 개의 서브트리(혹은 자식 노드)를 가지고 있는 경우
       let replacingNode = deletingNode.getLeftSubTree();
       let replacingNodeParent = deletingNode;
 
-      while (replacingNode.getRightSubTree() !== null) {
+      while (replacingNode.getRightSubTree() != null) {
+        // 삭제할 노드가 두 개의 서브트리(혹은 자식 노드)를 가지고 있는 경우
         replacingNodeParent = replacingNode;
         replacingNode = replacingNode.getRightSubTree();
       }
 
       let deletingNodeData = deletingNode.getData();
-      deletingNode.setData(replacingNode.getData()); // 값 덮어씌우기
+      deletingNode.setData(replacingNode.getData());
 
       // 대체할 노드가 해당 트리에서 가장 큰 값을 가지고 있기 때문에 대체할 오른쪽 서브트리는 존재하지 않음
-      if (replacingNodeParent.getLeftSubTree() === replacingNode) {
+      if (replacingNodeParent.getLeftSubTree() == replacingNode) {
         replacingNodeParent.setLeftSubTree(replacingNode.getLeftSubTree());
+
       } else {
         replacingNodeParent.setRightSubTree(replacingNode.getLeftSubTree());
       }
+
+      deletingNodeChild = deletingNode;
     }
 
-    deletingNodeChild = deletingNode;
-
     // 루트 노드를 제거하는 경우
-    if (fakeParentRootNode.getRightSubTree() === this.root) {
+    if (fakeParentRootNode.getRightSubTree() != this.root) {
       this.root = fakeParentRootNode.getRightSubTree();
     }
 
@@ -243,7 +240,7 @@ class AVLTree {
 
 const avlTree = new AVLTree();
 
-// console.log(" >>>>> insert ")
+console.log("========== insert ==========")
 
 avlTree.insert(avlTree.root, 1);
 avlTree.insert(avlTree.root, 2);
@@ -253,16 +250,16 @@ avlTree.insert(avlTree.root, 5);
 avlTree.insert(avlTree.root, 6);
 avlTree.insert(avlTree.root, 7);
 
-// console.log(avlTree.root);
-// avlTree.root.inOrderTraversal(avlTree.root);
-
-console.log(' >>> remove ');
-// avlTree.remove(avlTree.root, 2);
-// avlTree.remove(avlTree.root, 3);
-avlTree.remove(avlTree.root, 1);
-
-// console.log(avlTree.root);
+console.log(avlTree.root);
 avlTree.root.inOrderTraversal(avlTree.root);
 
-// console.log(" >>> search");
-// console.log(avlTree.search(7))
+console.log("========== remove ==========");
+avlTree.remove(avlTree.root, 2);
+avlTree.remove(avlTree.root, 3);
+avlTree.remove(avlTree.root, 1);
+
+console.log(avlTree.root);
+avlTree.root.inOrderTraversal(avlTree.root);
+
+console.log(" ========== search ==========");
+console.log(avlTree.search(7))
