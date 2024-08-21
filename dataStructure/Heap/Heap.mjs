@@ -32,7 +32,7 @@ class Heap {
     // 삽입된 노드와 부모 노드의 우선순위를 비교하여 알맞은 위치로 이동
     while (newNode.getParent() !== null) {
       // 구현 예정
-      if (this.getBigPriority(newNode.getData(), newNode.getParent().getData())) {
+      if (this.isBigPriority(newNode.getData(), newNode.getParent().getData())) {
         let tempData = newNode.getParent().getData();
         newNode.getParent().setData(newNode.getData());
         newNode.setData(tempData);
@@ -82,7 +82,7 @@ class Heap {
 
   }
 
-  getBigPriority(first, second) {
+  isBigPriority(first, second) {
     // 현재 구현하고자 하는 Heap 자료구조는 최소 Heap으로 그에 맞춰 우선순위를 리턴
     return first < second;
   }
@@ -99,6 +99,77 @@ class Heap {
       return node.getParent().getLeftSubTree();
     }
     return null;
+  }
+
+  remove() {
+    // 우선순위 Heap에서 제거는 우선순위가 가장 높은 데이터(=루트 노드)를 제거하는 것을 의미한다.
+    let deletedNode = null;
+
+    if (this.lastInsertedNode === this.root) {
+      deletedNode = this.root;
+      this.root = null;
+      this.lastInsertedNode = null;
+
+      return deletedNode;
+    }
+
+    // 1. 루트 노드와 가장 마지막에 삽입된 노드의 데이터를 스왑한다
+    let prevInsertedNode = this.getNewLastInsertedNode();
+    let tempData = this.root.getData();
+    this.root.setData(this.lastInsertedNode.getData());
+    this.lastInsertedNode.setData(tempData);
+
+    // 2. 마지막으로 삽입된 노드의 부모노드에서 해당 자식 노드를 초기화한다..
+    if (this.lastInsertedNode.getParent().getLeftSubTree() === this.lastInsertedNode) {
+      this.lastInsertedNode.getParent().setLeftSubTree(null);
+    } else {
+      this.lastInsertedNode.getParent().setRightSubTree(null);
+    }
+
+    // 3. 마지막으로 삽입된 노드의 부모 노드를 초기화한다.
+    this.lastInsertedNode.setParent(null);
+    deletedNode = this.lastInsertedNode;
+
+    // 4. 마지막으로 삽입된 노드 프로퍼티에 새로운 마지막 노드를 할당한다.
+    this.lastInsertedNode = prevInsertedNode;
+
+    // 5. 루트 노드와 자식 노드의 우선순위를 비교하여 알맞은 위치로 이동
+    let current = this.root;
+
+    // 일단 한 번 실행해야 하기 때문에 do-while문을 사용
+    do {
+      let higherChild = this.getHigherPriorityChild(current.getLeftSubTree(), current.getRightSubTree());
+
+      if (higherChild === null) {
+        // 자식 노드가 없는 경우이므로 while문을 탈출
+        break;
+      } else if (this.isBigPriority(current.getData(), higherChild.getData())) {
+        let tempData = current.getData();
+        current.setData(higherChild.getData());
+        higherChild.setData(tempData);
+        current = higherChild;
+      } else {
+        break;
+      }
+
+    } while (current.getLeftSubTree() !== null || current.getRightSubTree() !== null);
+    // 자식 노드가 없을때까지 반복
+
+    return deletedNode;
+  }
+
+  getHigherPriorityChild(left, right) {
+    if (left == null) return right;
+    if (right == null) return left;
+    if (this.isBigPriority(left.getData(), right.getData())) {
+      return left;
+    }
+
+    return right;
+  }
+
+  getNewLastInsertedNode() {
+    // 구현 예정
   }
 }
 
