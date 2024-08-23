@@ -105,22 +105,22 @@ class Heap {
     // 우선순위 Heap에서 제거는 우선순위가 가장 높은 데이터(=루트 노드)를 제거하는 것을 의미한다.
     let deletedNode = null;
 
-    if (this.lastInsertedNode === this.root) {
+    // 삽입된 노드가 한 개(=루트 노드)인 경우
+    if (this.lastInsertedNode == this.root) {
       deletedNode = this.root;
       this.root = null;
       this.lastInsertedNode = null;
-
       return deletedNode;
     }
 
     // 1. 루트 노드와 가장 마지막에 삽입된 노드의 데이터를 스왑한다
-    let prevInsertedNode = this.getNewLastInsertedNode();
+    let prevLastInsertedNode = this.getNewLastInsertedNode();
     let tempData = this.root.getData();
     this.root.setData(this.lastInsertedNode.getData());
     this.lastInsertedNode.setData(tempData);
 
     // 2. 마지막으로 삽입된 노드의 부모노드에서 해당 자식 노드를 초기화한다..
-    if (this.lastInsertedNode.getParent().getLeftSubTree() === this.lastInsertedNode) {
+    if (this.lastInsertedNode.getParent().getLeftSubTree() == this.lastInsertedNode) {
       this.lastInsertedNode.getParent().setLeftSubTree(null);
     } else {
       this.lastInsertedNode.getParent().setRightSubTree(null);
@@ -131,7 +131,7 @@ class Heap {
     deletedNode = this.lastInsertedNode;
 
     // 4. 마지막으로 삽입된 노드 프로퍼티에 새로운 마지막 노드를 할당한다.
-    this.lastInsertedNode = prevInsertedNode;
+    this.lastInsertedNode = prevLastInsertedNode;
 
     // 5. 루트 노드와 자식 노드의 우선순위를 비교하여 알맞은 위치로 이동
     let current = this.root;
@@ -143,7 +143,7 @@ class Heap {
       if (higherChild === null) {
         // 자식 노드가 없는 경우이므로 while문을 탈출
         break;
-      } else if (this.isBigPriority(current.getData(), higherChild.getData())) {
+      } else if (!this.isBigPriority(current.getData(), higherChild.getData())) {
         let tempData = current.getData();
         current.setData(higherChild.getData());
         higherChild.setData(tempData);
@@ -227,4 +227,8 @@ export { Heap };
 // console.log(heap.root);
 
 // console.log("===== remove =====")
+// console.log(heap.remove());
+// console.log(heap.remove());
+// console.log(heap.remove());
+// console.log(heap.remove());
 // console.log(heap.remove());
