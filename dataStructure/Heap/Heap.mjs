@@ -168,18 +168,63 @@ class Heap {
     return right;
   }
 
+  // 마지막으로 삽입된 노드의 이전 노드를 반환하는 함수로
+  // 총 3가지 경우에 대한 구현을 진행해야 한다.
   getNewLastInsertedNode() {
-    // 구현 예정
+    let prevLastInsertedNode = null;
+
+    if (this.lastInsertedNode === this.lastInsertedNode.getParent().getLeftSubTree()) {
+      // #1. 마지막에 삽입된 노드가 부모 노드의 왼쪽 자식 노드인 경우
+      let current = this.lastInsertedNode;
+      let firstLeftSibling = null;
+
+      while (current.getParent().getParent() !== null) {
+        current = current.getParent();
+
+        firstLeftSibling = this.getLeftSibling(current);
+        if (firstLeftSibling !== null) break;
+      }
+
+      if (firstLeftSibling !== null) {
+        // #1-a. 부모 노드 중에 왼쪽 형제 노드가 존재하는 경우
+        // 마지막으로 삽입된 노드의 첫 번째 왼쪽 형제 노드에서 가장 오른쪽 끝에 있는 자식 노드를 반환한다.
+        while (firstLeftSibling.getRightSubTree() !== null) {
+          firstLeftSibling = firstLeftSibling.getRightSubTree();
+        }
+
+        prevLastInsertedNode = firstLeftSibling;
+      } else {
+        // #1-b. 부모 노드 중에 왼쪽 형제 노드가 존재하지 않는 경우
+        // 루트 노드에서 가장 오른쪽 자식 노드를 반환한다.
+        current = this.root;
+
+        while (current.getRightSubTree() !== null) {
+          current = current.getRightSubTree();
+        }
+
+        prevLastInsertedNode = current;
+      }
+    } else {
+      // #2. 마지막에 삽입된 노드가 부모 노드의 오른쪽 자식 노드인 경우
+      prevLastInsertedNode = this.lastInsertedNode.getParent().getLeftSubTree();
+    }
+
+    return prevLastInsertedNode;
   }
 }
 
-const heap = new Heap();
+export { Heap };
 
-heap.insert(4)
-heap.insert(2)
-heap.insert(5)
-heap.insert(7)
-heap.insert(1)
+// const heap = new Heap();
 
-heap.root.inOrderTraversal(heap.root);
-console.log(heap.root);
+// heap.insert(4)
+// heap.insert(2)
+// heap.insert(5)
+// heap.insert(7)
+// heap.insert(1)
+
+// heap.root.inOrderTraversal(heap.root);
+// console.log(heap.root);
+
+// console.log("===== remove =====")
+// console.log(heap.remove());
