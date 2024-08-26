@@ -31,3 +31,8 @@ const sorted = [];
 while (heap.root !== null) {
   console.log(heap.remove());
 }
+
+/**
+ * 힙 정렬의 시간 복잡도는 O(nlogn)으로 퀵 정렬과 유사하지만
+ * 피봇이라는 변수가 없으므로 안정적인 O(nlogn)의 성능을 보장한다.
+ */
