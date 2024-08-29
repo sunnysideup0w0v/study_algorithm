@@ -1,3 +1,5 @@
+import { PersonalizedPriorityHeap } from '../Heap/example.mjs';
+
 class TrieNode {
   constructor() {
     this.children = {};
@@ -46,6 +48,8 @@ class Trie {
       }
     }
 
+    // 애스터리스크의 value를 검색 빈도수로 설정하고, 애스터리스크 노드의 검색 빈도수를 증가시킨다.
+    currentNode.children['*']++;
     return currentNode;
   }
 
@@ -53,17 +57,18 @@ class Trie {
    * 
    * @param {TrieNode} startNode 순회를 시작하는 노드
    * @param {string} word 현재 노드까지 탐색한 문자열
-   * @param {string[]} words 모든 단어를 저장하는 배열
-   * @returns {string[]} 모든 단어를 저장한 배열
+   * @param {Word[]} words 모든 단어를 저장하는 배열
+   * @returns {Word[]} 모든 단어를 저장한 배열
    */
   getAllWords(startNode = null, word = "", words = []) {
     let currentNode = startNode ?? this.root; // startNode가 존재할 경우 startNode를 시작점으로, 그렇지 않을 경우 rootNode을 시작점으로 하여 순회를 시작한다.
 
     for (let key in currentNode.children) {
+      let childNode = currentNode.children[key];
+
       if (key === '*') { // 문자열의 끝에 도달했다면
-        words.push(word)
+        words.push(new Word(word, childNode)); // 애스터리스크 키 값의 value = number (검색빈도수)
       } else {
-        let childNode = currentNode.children[key];
         this.getAllWords(childNode, `${word}${key}`, words);
       }
     }
@@ -74,13 +79,50 @@ class Trie {
   /**
    * 
    * @param {string} word 입력된 단어
-   * @returns {string[]} 자동완성된 단어 배열
+   * @returns {Word[]} 자동완성된 단어 배열
    */
   autoComplete(word) {
     let currentNode = this.search(word);
 
     if (!currentNode) return []; // 자동완성될 단어가 없음.
     return this.getAllWords(currentNode, word); // 자동완성된 단어 배열을 반환
+  }
+
+  /**
+   * 검색 빈도수에 따라 나열된 자동완성 단어 배열을 반환
+   * @param {string} word 
+   * @returns {Word[]} 검색 빈도수에 따라 나열된 자동완성 단어 배열
+   */
+  autoCompleteByCount(word) {
+    let words = this.autoComplete(word);
+    let heap = new PersonalizedPriorityHeap();
+    heap.isBigPriority = (first, second) => first.priority > second.priority;
+
+    for (let word of words) {
+      heap.insert(word);
+    }
+
+    const sortedByPriority = [];
+
+    do {
+      let removed = heap.remove();
+
+      if (removed !== null) {
+        sortedByPriority.push(removed);
+      } else {
+        break;
+      }
+    } while (true)
+
+    return sortedByPriority;
+  }
+}
+
+class Word {
+  constructor(word, count) {
+    this.word = word;
+    this.count = count;
+    this.priority = count;
   }
 }
 
@@ -96,9 +138,22 @@ console.log(trie.search('사과'));
 
 console.log("===== 존재하는 단어(고등어) 조회 =====");
 console.log(trie.search('고등어'));
+console.log(trie.search('고등어'));
+console.log(trie.search('김치'));
+console.log(trie.search('김치'));
+console.log(trie.search('김치'));
+console.log(trie.search('김치'));
+console.log(trie.search('김치찜'));
+console.log(trie.search('김치찜'));
+console.log(trie.search('김치찌개'));
+console.log(trie.search('김치찌개'));
+console.log(trie.search('김치찌개'));
 
 console.log("===== 모든 단어 조회 =====");
 console.log(trie.getAllWords());
 
 console.log("===== 자동완성 =====");
 console.log(trie.autoComplete('김치'));
+
+console.log("===== 검색 빈도수에 따라 자동완성 =====");
+console.log(trie.autoCompleteByCount('김치'));
