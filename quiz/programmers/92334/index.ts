@@ -1,3 +1,7 @@
+/**
+ * https://school.programmers.co.kr/learn/courses/30/lessons/92334
+ */
+
 interface TestCase {
   id_list: string[];
   report: string[];
