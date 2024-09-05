@@ -17,27 +17,29 @@ class Vertex {
   }
 }
 
-let jake = new Vertex('Jake');
-let ben = new Vertex('Ben');
-let joy = new Vertex('Joy');
-let ivy = new Vertex('Ivy');
-let elin = new Vertex('Elin');
-let anna = new Vertex('Anna');
-let david = new Vertex('David');
+export { Vertex };
 
-jake.addAdjacentVertex(ben);
-ben.addAdjacentVertex(jake);
-joy.addAdjacentVertex(ben);
-joy.addAdjacentVertex(ivy);
-ivy.addAdjacentVertex(joy);
-ivy.addAdjacentVertex(ben);
-elin.addAdjacentVertex(ivy);
-elin.addAdjacentVertex(anna);
-anna.addAdjacentVertex(ben);
-anna.addAdjacentVertex(david);
-anna.addAdjacentVertex(elin);
-david.addAdjacentVertex(anna);
+// let jake = new Vertex('Jake');
+// let ben = new Vertex('Ben');
+// let joy = new Vertex('Joy');
+// let ivy = new Vertex('Ivy');
+// let elin = new Vertex('Elin');
+// let anna = new Vertex('Anna');
+// let david = new Vertex('David');
 
-console.log(anna.adjacent_vertices);
-anna.removeAdjacentVertex(david);
-console.log(anna.adjacent_vertices);
+// jake.addAdjacentVertex(ben);
+// ben.addAdjacentVertex(jake);
+// joy.addAdjacentVertex(ben);
+// joy.addAdjacentVertex(ivy);
+// ivy.addAdjacentVertex(joy);
+// ivy.addAdjacentVertex(ben);
+// elin.addAdjacentVertex(ivy);
+// elin.addAdjacentVertex(anna);
+// anna.addAdjacentVertex(ben);
+// anna.addAdjacentVertex(david);
+// anna.addAdjacentVertex(elin);
+// david.addAdjacentVertex(anna);
+
+// console.log(anna.adjacent_vertices);
+// anna.removeAdjacentVertex(david);
+// console.log(anna.adjacent_vertices);
