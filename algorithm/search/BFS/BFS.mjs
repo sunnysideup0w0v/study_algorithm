@@ -1,15 +1,30 @@
-import { Vertex } from '../../../dataStructure/Graph/Graph.mjs'
+import { Vertex } from '../../../dataStructure/Graph/Graph.mjs';
+import { Queue } from '../../../dataStructure/Queue.mjs';
 
-function DFS(vertex, visited_vertices = {}) {
+// DFS = 재귀함수를 활용해 구현
+// BFS = Queue, while문을 활용해 구현
+function BFS(vertex) {
+  let queue = new Queue();
+  let visited_vertices = {};
+
   visited_vertices[vertex.value] = true;
+  queue.enqueue(vertex);
 
-  console.log(vertex.value);
+  while (queue.isEmpty() == false) {
+    let current_vertex = queue.dequeue().data;
 
-  for (let adjacent of vertex.adjacent_vertices) {
-    if (visited_vertices[adjacent.value]) {
-      continue;
-    } else {
-      DFS(adjacent, visited_vertices);
+    console.log(current_vertex.value);
+
+
+    for (let adjacent of current_vertex.adjacent_vertices) {
+      if (visited_vertices[adjacent.value]) {
+        // 이미 방문한 정점인 경우
+        continue;
+      } else {
+        // 방문하지 않은 정점일 경우
+        visited_vertices[adjacent.value] = true;
+        queue.enqueue(adjacent);
+      }
     }
   }
 }
@@ -47,4 +62,4 @@ elin.addAdjacentVertex(owen);
 
 owen.addAdjacentVertex(elin);
 
-DFS(ben);
+BFS(ben);
