@@ -63,7 +63,9 @@ const quiz_solution_before_check_others = (
     if (report_hash[doc].length < k) delete report_hash[doc];
   }
 
-  [...Object.values(report_hash)].flat().forEach((id) => id_hash[id]++);
+  [...Object.values(report_hash)]
+    .flat()
+    .forEach((id) => id_hash[id as string]++);
 
   return Object.values(id_hash);
 };
@@ -89,7 +91,9 @@ const quiz_solution = (
     if (report_hash[doc].length < k) delete report_hash[doc];
   }
 
-  [...Object.values(report_hash)].flat().forEach((id) => id_hash[id]++);
+  [...Object.values(report_hash)]
+    .flat()
+    .forEach((id) => id_hash[id as string]++);
 
   return Object.values(id_hash);
 };

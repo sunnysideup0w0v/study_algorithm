@@ -3,6 +3,6 @@
     "target": "ES6",
     "module": "CommonJS",
     "sourceMap": true,
-    "lib": ["ES6", "ES2017", "DOM"]
+    "lib": ["ES6", "ES2019", "DOM"]
   }
 }
