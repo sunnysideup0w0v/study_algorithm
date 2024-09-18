@@ -34,21 +34,23 @@ class Dijkstra {
     }
 
     if (unvisited_cities[start_city.name] == null) {
-      console.log("추ㄹ발 도시가 등록되어 있지 않습니다.")
+      console.log("출발 도시가 등록되어 있지 않습니다.")
       return null;
     }
 
     for (let city_name in unvisited_cities) {
-      shortest_path_table[city_name] = Infinity;
+      shortest_path_table[city_name] = { distance: Infinity, city: null }
     }
 
-    shortest_path_table[start_city.name] = 0;
+
+    shortest_path_table[start_city.name].city = null;
+    shortest_path_table[start_city.name].distance = 0;
 
     while (Object.keys(unvisited_cities).length > 0) {
       let closest_city_name = null;
 
       for (let city_name in unvisited_cities) {
-        if (closest_city_name == null | shortest_path_table[city_name] < shortest_path_table[closest_city_name]
+        if (closest_city_name == null || shortest_path_table[city_name].distance < shortest_path_table[closest_city_name].distance
         ) {
           closest_city_name = city_name
         }
@@ -66,20 +68,34 @@ class Dijkstra {
           continue;
         }
 
-        let distance_from_start_city = shortest_path_table[closest_city_name]; // 출발 도시에서 현재 도시까지의 거리
+        let distance_from_start_city = shortest_path_table[closest_city_name].distance; // 출발 도시에서 현재 도시까지의 거리
         let distance_to_adjacent_city = visited_cities[closest_city_name].adjacent_cities[adjacent_city_name]; // 현재 도시에서 인접 도시까지의 거리
         let distance = distance_from_start_city + distance_to_adjacent_city;
 
         // 테이블에 기재되어있는
-        if (shortest_path_table[adjacent_city_name] > distance) {
-          shortest_path_table[adjacent_city_name] = distance;
+        if (shortest_path_table[adjacent_city_name].distance > distance) {
+          shortest_path_table[adjacent_city_name].distance = distance;
+          shortest_path_table[adjacent_city_name].city = visited_cities[closest_city_name];
         }
       }
     }
 
-    // console.log(shortest_path_table)
-    console.log(shortest_path_table[end_city.name]);
+    let path_string = this.showShortestPathRecursively(end_city.name, shortest_path_table);
+    console.log(`최단 거리: ${shortest_path_table[end_city.name].distance}km / 최단 경로: ${path_string}`)
   }
+
+  showShortestPathRecursively(destination_city_name, shortest_path_table, path_string = "") {
+    if (shortest_path_table[destination_city_name].city == null) {
+      path_string += destination_city_name;
+      return path_string;
+    }
+
+    path_string = this.showShortestPathRecursively(shortest_path_table[destination_city_name].city.name, shortest_path_table, path_string);
+    path_string += ' -> ' + destination_city_name;
+
+    return path_string;
+  }
+
 }
 
 let dijkstra = new Dijkstra();
