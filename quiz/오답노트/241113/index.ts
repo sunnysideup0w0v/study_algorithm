@@ -25,7 +25,7 @@ const solution_241113_with_for_loop = (
   return answer;
 };
 
-const solution_241113_with_fill = (
+const solution_241113_with_fill_1 = (
   arr: string[],
   length: number,
   fill: string
@@ -37,8 +37,18 @@ const solution_241113_with_fill = (
     answer[i] = sortedArr[i];
   }
 
-  // test
   return answer;
+};
+
+const solution_241113_with_fill_2 = (
+  arr: string[],
+  length: number,
+  fill: string
+) => {
+  const sortedArr = arr.sort();
+  const filledEmptyArr = Array(length - arr.length).fill(fill);
+
+  return [...sortedArr, ...filledEmptyArr];
 };
 
 console.log(
@@ -46,4 +56,6 @@ console.log(
   solution_241113_with_for_loop(['jude', 'amy'], 6, '')
 );
 
-console.log('fill >>> ', solution_241113_with_fill(['jude', 'amy'], 6, ''));
+console.log('fill >>> ', solution_241113_with_fill_1(['jude', 'amy'], 6, ''));
+
+console.log('fill >>> ', solution_241113_with_fill_2(['jude', 'amy'], 6, ''));
